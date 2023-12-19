@@ -34,9 +34,11 @@ def scrape_website(url):
 
 def text_to_pdf(text, filename):
     """Convert text content to a PDF file."""
-    path_wkhtmltopdf = '/usr/local/bin/wkhtmltopdf'
-    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-    pdfkit.from_string(text, filename, configuration=config)
+    options = {
+        'quiet': '',
+    }
+    # config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    pdfkit.from_string(text, filename, options=options)
     return filename
 
 def upload_to_openai(filepath):
@@ -129,8 +131,8 @@ def process_message_with_citations(message):
 
 
 # Main chat interface setup
-st.title("OpenAI Assistants API Chat")
-st.write("This is a simple chat application that uses OpenAI's API to generate responses.")
+st.title("The TVC Labs Documents Chat")
+st.write("This is a chat application that uses OpenAI's API to help with understanding data (Links & PDFs).")
 
 # Only show the chat interface if the chat has been started
 if st.session_state.start_chat:
