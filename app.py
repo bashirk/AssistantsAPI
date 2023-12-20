@@ -1,9 +1,12 @@
 # Import necessary libraries
+import os
+import subprocess
+import platform
+import pdfkit
 import openai
 import streamlit as st
 from bs4 import BeautifulSoup
 import requests
-import pdfkit
 import time
 
 # Set your OpenAI Assistant ID here
@@ -34,11 +37,15 @@ def scrape_website(url):
 
 def text_to_pdf(text, filename):
     """Convert text content to a PDF file."""
-    options = {
-        'quiet': '',
-    }
-    # config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-    pdfkit.from_string(text, filename, options=options)
+    if platform.system() == 'Windows':
+        pdfkit_config = pdfkit.configuration(wkhtmltopdf=os.environ.get('WKHTMLTOPDF_PATH', 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
+    else:
+        WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_PATH', '/app/bin/wkhtmltopdf')],
+                                            stdout=subprocess.PIPE).communicate()[0].strip()
+        pdfkit_config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
+    path_wkhtmltopdf = '/usr/local/bin/wkhtmltopdf'
+    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    pdfkit.from_string(text, filename, configuration=config)
     return filename
 
 def upload_to_openai(filepath):
